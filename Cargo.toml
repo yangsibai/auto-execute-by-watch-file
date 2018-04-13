@@ -1,0 +1,6 @@
+[package]
+name = "auto-execute-by-watch-file"
+version = "0.1.0"
+authors = ["Yangsibai <yangsibai@gmail.com>"]
+
+[dependencies]
