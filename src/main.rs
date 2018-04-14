@@ -5,32 +5,33 @@ use std::{thread, time};
 use std::process::Command;
 
 fn main() {
-    let fileToWatch = env::args().nth(1).expect("Please specifc the file to watch.");
-    let commandToExecute = env::args().nth(2).expect("Please specifc the command to execute.");
-    println!("{} {}", fileToWatch, commandToExecute);
+    let file_to_watch = env::args().nth(1).expect("Please specifc the file to watch.");
+    let cmd_to_execute = env::args().nth(2).expect("Please specifc the command to execute.");
+    println!("{} {}", file_to_watch, cmd_to_execute);
 
-    let mut initialTime = getModifiedTime(&fileToWatch);
+    let mut initial_time = get_modified_time(&file_to_watch);
 
-    let sleepTime = time::Duration::from_secs(5);
+    let sleep_time = time::Duration::from_secs(5);
 
-    while true {
-        let currentTime = getModifiedTime(&fileToWatch);
-        if currentTime != initialTime {
-            println!("execute the command {}", commandToExecute);
-            execute(&commandToExecute);
-            initialTime = currentTime;
+    loop {
+        let current_time = get_modified_time(&file_to_watch);
+        if current_time != initial_time {
+            println!("execute the command {}", cmd_to_execute);
+            execute(&cmd_to_execute);
+            initial_time = current_time;
         }
-        thread::sleep(sleepTime);
+        thread::sleep(sleep_time);
     }
 }
 
 
-fn getModifiedTime(path: &str) -> SystemTime {
+fn get_modified_time(path: &str) -> SystemTime {
     fs::metadata(path).unwrap().modified().unwrap()
 }
 
 
 fn execute(cmd: &str) {
-    let output = Command::new(cmd).output().expect("Fail to execute process");
+    let v: Vec<&str> = cmd.split(' ').collect();
+    let output = Command::new(v[0]).args(&v[1..]).output().expect("Fail to execute process");
     println!("{:?}", output);
 }
